@@ -77,6 +77,8 @@ class Network:
     def clustering(self):
 
         def check_valid_cluster(clusterer, data, n_clusters, n_targets):
+            sen_range = self.phy["sen_range"]
+            com_range = self.phy["com_range"]
             # mảng các label, mỗi label cluster là mảng các node
             # print(n_clusters)
             cluster_labels = clusterer.fit_predict(data)
@@ -91,7 +93,7 @@ class Network:
             for index_cluster in range(0, n_clusters):
                 for target in cluster[index_cluster]: 
                     #
-                    if math.dist(target, centers[index_cluster]) > 140: 
+                    if math.dist(target, centers[index_cluster]) > com_range * 3/2 + sen_range / 2 : 
                         return False    
             return True
 
@@ -101,6 +103,9 @@ class Network:
             list_targets_location.append(target.location)
         list_targets_location = np.array(list_targets_location)
         # print(list_targets_location)
+        # parameter = 6
+        # if len(self.listTargets) == 150:
+        #     parameter = 4
         range_n_clusters = np.arange(2, int(len(list_targets_location)/2))
         
         max_silhouette_score = 0
@@ -230,7 +235,9 @@ class Network:
         edges = []
         edges_id = []
         list_common_elements = []
-        para = 20
+        para = len(self.listTargets)/5
+        print(para)
+        print(len(self.listTargets))
         for cluster in self.listClusters:
             list_id_centroid_cluster.append((cluster.id,cluster.centroid[0],cluster.centroid[1]))
         # print(list_id_centroid_cluster)
@@ -240,20 +247,6 @@ class Network:
         print("target",len(self.listTargets))
         print("target",self.listTargets)
         print("target")
-        if len(self.listTargets) < 60:
-            para = 20
-        elif 60 <= len(self.listTargets) <= 160:
-            para = 30
-        elif len(self.listTargets) > 160:
-            para = 40
-
-            
-        para = 40
-
-        
-        
-        print("para: ",para)
-
 
 
 
@@ -358,48 +351,48 @@ class Network:
         # print(num_targets_clusters)
     
         # Vẽ 
-        # edge_colors = cycle([ 'g', 'b', 'y', 'c', 'm', 'k'])
+        edge_colors = cycle([ 'g', 'b', 'y', 'c', 'm', 'k'])
 
-        # cluster_colors = ['g', 'b', 'y', 'c', 'm', 'pink', 'orange', 'purple', 
-        #                 'brown', 'olive', 'teal', 'navy', 'maroon', 'lime', 'aqua', 'fuchsia',
-        #                 'indigo', 'gold']
-        # plt.figure(figsize=(10, 10))
-        # for i in range(len(self.listClusters)):
-        #     cluster = self.listClusters[i]
-        #     color = cluster_colors[i % len(cluster_colors)]  
-        #     # Trích xuất các điểm và điểm centroid từ dữ liệu cluster
-        #     points = [target.location for target in cluster.listTargets]
-        #     centroid = cluster.centroid
-        #     x_points = [point[0] for point in points]
-        #     y_points = [point[1] for point in points]
-        #     # Tạo mảng tọa độ x và y của điểm centroid
-        #     centroid_x = centroid[0]
-        #     centroid_y = centroid[1]
-        #     # Vẽ các điểm trong cluster (trừ điểm centroid)
-        #     plt.scatter(x_points, y_points, color=color)
-        #     # Vẽ điểm centroid
-        #     plt.scatter(centroid_x, centroid_y, color='red')
+        cluster_colors = ['g', 'b', 'y', 'c', 'm', 'pink', 'orange', 'purple', 
+                        'brown', 'olive', 'teal', 'navy', 'maroon', 'lime', 'aqua', 'fuchsia',
+                        'indigo', 'gold']
+        plt.figure(figsize=(10, 10))
+        for i in range(len(self.listClusters)):
+            cluster = self.listClusters[i]
+            color = cluster_colors[i % len(cluster_colors)]  
+            # Trích xuất các điểm và điểm centroid từ dữ liệu cluster
+            points = [target.location for target in cluster.listTargets]
+            centroid = cluster.centroid
+            x_points = [point[0] for point in points]
+            y_points = [point[1] for point in points]
+            # Tạo mảng tọa độ x và y của điểm centroid
+            centroid_x = centroid[0]
+            centroid_y = centroid[1]
+            # Vẽ các điểm trong cluster (trừ điểm centroid)
+            plt.scatter(x_points, y_points, color=color)
+            # Vẽ điểm centroid
+            plt.scatter(centroid_x, centroid_y, color='red')
 
-        # # Vẽ các cạnh giữa các cluster
-        # for edge, color in zip(edges, edge_colors):
+        # Vẽ các cạnh giữa các cluster
+        for edge, color in zip(edges, edge_colors):
 
-        #     if edge[1] is self.baseStation:
-        #         x_values = [edge[0].centroid[0], 500]
-        #         y_values = [edge[0].centroid[1], 500]
-        #         plt.plot(x_values, y_values, color=color)
-        #     else:
-        #         # Trích xuất tọa độ của các điểm trong cạnh
-        #         x_values = [edge[0].centroid[0], edge[1].centroid[0]]
-        #         y_values = [edge[0].centroid[1], edge[1].centroid[1]]
-        #         plt.plot(x_values, y_values, color=color)
-        # plt.scatter(500, 500, color='red', marker='*', s=300, label='Base Station')
+            if edge[1] is self.baseStation:
+                x_values = [edge[0].centroid[0], 500]
+                y_values = [edge[0].centroid[1], 500]
+                plt.plot(x_values, y_values, color=color)
+            else:
+                # Trích xuất tọa độ của các điểm trong cạnh
+                x_values = [edge[0].centroid[0], edge[1].centroid[0]]
+                y_values = [edge[0].centroid[1], edge[1].centroid[1]]
+                plt.plot(x_values, y_values, color=color)
+        plt.scatter(500, 500, color='red', marker='*', s=300, label='Base Station')
         
-        # plt.xlabel('X')
-        # plt.ylabel('Y')
-        # plt.show()
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show()
         
-        # with open(edges.json, "w") as output_file:
-        #     json.dump(edges, output_file)
+        with open(edges.json, "w") as output_file:
+            json.dump(edges, output_file)
 
 
         return edges
@@ -415,7 +408,9 @@ class Network:
 
         epsilon = 1e-6
         com_range =  self.phy['com_range']*0.9
+        print(com_range)
         sen_range =  self.phy['sen_range']*0.9
+        print(sen_range)
         Cnt_in = [0] * (len(self.listClusters) + 1)
         Cnt_out= [0] * (len(self.listClusters) + 1)
 
@@ -479,16 +474,78 @@ class Network:
                     if euclidean(node.location, target.location) <= min_dis:
                         min_dis=euclidean(node.location, target.location)
                         nearest_node = node
-                nearest_node_targets.append([target,nearest_node,min_dis])
+                        active = 0
+                nearest_node_targets.append([target,nearest_node,min_dis, active])
+
+
+                #  sắp xếp mảng  nearest_node_targets:
+            nearest_node_targets =  sorted(nearest_node_targets, key=lambda element: element[2], reverse=True)
+            
+            # for iteration in range(0, len(nearest_node_targets)):
+            #     element = nearest_node_targets[iteration]
+            #     target_x , target_y = element[0].location
+            #     nearest_node_x, nearest_node_y = element[1].location
+            #     min_dis_node = element[2]
+            #     active_status = element[3]
+            #     beta = min_dis_node/sen_range
+            #     if active_status == 1:
+            #         continue
+            #     if active_status == 0:
+            #         if beta < 1:
+            #             nearest_node_targets[iteration][3] = 1
+            #             continue
+            #         else: 
+            #             # tạo đường thẳng từ target tới node gần nhất
+            #             temp_new_nodes = []
+            #             temp_new_nodes.append(element[1].location)
+            #             delta_x = nearest_node_x -target_x 
+            #             delta_y = nearest_node_y -target_y
+            #             sensor_x = target_x + delta_x/beta
+            #             sensor_y = target_y + delta_y/beta
+            #             ID+=1
+            #             cluster.listNodes.append(SensorNode([sensor_x,sensor_y],ID,self.phy))
+            #             temp_new_nodes.append([sensor_x,sensor_y])
+            #             beta = element[2]/com_range
+            #             delta_x = nearest_node_x -sensor_x 
+            #             delta_y = nearest_node_y -sensor_y
+            #             for i in range(1,int(min_dis_node/com_range) + 1):
+            #                 x_new = sensor_x + i*delta_x/beta
+            #                 y_new = sensor_y + i*delta_y/beta
+            #                 ID+=1
+            #                 cluster.listNodes.append(ConnectorNode([x_new,y_new],ID,self.phy))
+            #                 temp_new_nodes.append([x_new,y_new])
+  
+            #             # check xem có target nào nằm trong bán kính sen_range của đường vừa tạo
+            #             for node in temp_new_nodes:
+            #                 for i in range(0,len(nearest_node_targets)):
+            #                     if nearest_node_targets[i][3] == 0:
+            #                         distance = euclidean(nearest_node_targets[i][1].location, node)
+            #                         if distance <= sen_range:
+            #                             nearest_node_targets[i][3] = 1
+                        
+
+
+                                
+
+
+                        
+
+                    
+
+
+
+
 
             for element in nearest_node_targets:
                 target_x , target_y = element[0].location
                 nearest_node_x, nearest_node_y = element[1].location
                 min_dis_node = element[2]
-                beta = element[2]/sen_range
-                if beta <= 1:
+                beta = min_dis_node/sen_range
+                if beta < 1:
+                    element[3] = 1
                     continue
                 else:
+                    # Câu lệnh if check ở đây để kiểm tra xem cái target này đã được theo dõi chưa
                     delta_x = nearest_node_x -target_x 
                     delta_y = nearest_node_y -target_y
                     sensor_x = target_x + delta_x/beta
@@ -503,6 +560,7 @@ class Network:
                         y_new = sensor_y + i*delta_y/beta
                         ID+=1
                         cluster.listNodes.append(ConnectorNode([x_new,y_new],ID,self.phy))
+                    
                     
             
 
@@ -668,6 +726,7 @@ class Network:
                 #for i in range(len(self.targets_active)):
                     #if(self.targets_active[i] == 0):
                         #print(i,self.targets_active[i])
+                print(self.targets_active)
                 print("die")
                 break         
         return
@@ -687,6 +746,13 @@ class Network:
             if node.status == 0:
                 tmp += 1
         return tmp
+    
+    def get_dead_nodes(self):
+        list_dead_nodes = []
+        for node in self.listNodes:
+            if node.status == 0:
+                list_dead_nodes.append(node)
+        return list_dead_nodes
 
 def convert_cluster_to_dict(cluster):
         return {
