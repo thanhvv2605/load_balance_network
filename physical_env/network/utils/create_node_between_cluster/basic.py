@@ -10,6 +10,8 @@ def createNodeBetweenCluster(net):
         epsilon = 1e-6
         ListRelayNode = []
         range = net.phy['com_range'] * net.Alpha
+        # range = net.phy['com_range'] * 0.7
+
         ID = 0
         for node in net.listNodes:
             if node.id > ID: 

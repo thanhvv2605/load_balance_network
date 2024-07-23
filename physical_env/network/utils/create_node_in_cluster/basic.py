@@ -42,6 +42,8 @@ def createNodeInCluster(net):
             for i in range(0,Cnt_in[id] + Cnt_out[id]):
                 X = cluster.centroid[0] + (com_range/2) * math.cos(alpha)
                 Y = cluster.centroid[1] + (com_range/2) * math.sin(alpha)
+                # X = cluster.centroid[0] + (com_range/4) * math.cos(alpha)
+                # Y = cluster.centroid[1] + (com_range/4) * math.sin(alpha)
                 cnt +=1
                 ID  +=1
                 if(cnt<=Cnt_in[id]): 
@@ -95,6 +97,8 @@ def createNodeInCluster(net):
                     delta_x = nearest_node_x -sensor_x 
                     delta_y = nearest_node_y -sensor_y
                     for i in range(1,int(min_dis_node/com_range)):
+                    # for i in range(1,int(min_dis_node/com_range) + 1):
+
                         x_new = sensor_x + i*delta_x/beta
                         y_new = sensor_y + i*delta_y/beta
                         ID+=1
@@ -103,4 +107,3 @@ def createNodeInCluster(net):
             nodeInsideCluster = nodeInsideCluster + cluster.listNodes  
              
         return nodeInsideCluster   
-

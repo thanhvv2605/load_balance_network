@@ -25,7 +25,7 @@ def clustering(net):
 
             for index_cluster in range(0, n_clusters):
                 for target in cluster[index_cluster]: 
-                    if math.dist(target, centers[index_cluster]) > 140: 
+                    if math.dist(target, centers[index_cluster]) > 240: 
                         return False    
             return True
 

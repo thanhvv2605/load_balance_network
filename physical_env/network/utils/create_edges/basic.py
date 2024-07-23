@@ -34,6 +34,7 @@ def createEdges(net):
         para = len(net.listTargets)/5
         print(para)
         print(len(net.listTargets))
+
         for cluster in net.listClusters:
             list_id_centroid_cluster.append((cluster.id,cluster.centroid[0],cluster.centroid[1]))
 
@@ -69,7 +70,9 @@ def createEdges(net):
             for cluster in net.listClusters:
                 if id == cluster.id:
                     num_targets_clusters.append([cluster.id,len(cluster.listTargets)])
-
+        
+        print(num_targets_clusters)
+        
         # Chọn cạnh
         for point in list_common_elements:
             id =point[0]
@@ -82,7 +85,7 @@ def createEdges(net):
                 found = False
                 for common_point in common_points:
                     for targets_cluster in num_targets_clusters:
-                        if targets_cluster[0]==common_point:
+                        if targets_cluster[0] == common_point:
                             if num_targets_point + targets_cluster[1] < para:
                                 edges_id.append([id,common_point])
                                 targets_cluster[1]=targets_cluster[1]+num_targets_point
@@ -96,8 +99,6 @@ def createEdges(net):
                 for cluster in net.listClusters:
                     if cluster.id == id:
                         edges_id.append((id,-1))
-
-
 
 
         for targets_cluster in num_targets_clusters:
@@ -118,4 +119,9 @@ def createEdges(net):
                 if edge[1] == -1:
                     cluster2 = net.baseStation 
             edges.append((cluster1,cluster2))
+
+        
+        print("số target tải mỗi")
+        print(num_targets_clusters)
+
         return edges

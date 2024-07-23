@@ -12,6 +12,10 @@ class Network:
         self.listTargets = listTargets
         self.phy = phy
         self.targets_active = [1 for _ in range(len(self.listTargets))]
+        # bổ sung
+        for target in self.listTargets:
+            target.is_active = 1
+
         self.alive = 1
         self.found = []
         self.Alpha = 0.8
@@ -51,6 +55,9 @@ class Network:
 
         for i in range(len(self.targets_active)):
             self.targets_active[i] = 0
+        # bổ sung
+        for target in self.listTargets:
+            target.is_active = 0
 
         while True:
             if len(tmp1) == 0:
@@ -61,6 +68,9 @@ class Network:
                 #print(node.location[0],node.location[1])
                 for target in node.listTargets:
                     self.targets_active[target.id] = 1
+                    # bổ sung
+                    self.listTargets[target.id].is_active = 1
+
                 for neighbor in node.neighbors:
                     if neighbor.status == 1 and neighbor.level == -1:
                         tmp2.append(neighbor)
@@ -86,7 +96,11 @@ class Network:
         return
 
     def check_targets(self):
-        return min(self.targets_active)
+        for target in self.listTargets:
+            if target.is_active == 0:
+                return 0
+        return 1
+        # return min(self.targets_active)
     
     def check_nodes(self):
         tmp = 0
