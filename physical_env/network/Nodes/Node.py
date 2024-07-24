@@ -39,7 +39,9 @@ class Node:
         self.level = None
         self.status = 1
         self.neighbors = []
-        self.listTargets = []
+        self.potentialSender = [] # là danh sách con của neighbors nhưng có khả năng gửi gói tin cho self
+        self.listTargets = [] # danh sách các targets trong phạm vi có thể theo dõi, không tính tới việc sẽ theo dõi các targets này hay không
+        self.listTotalTargets = [] # là danh sách con của target, là các target trong phạm vi nhưng nó theo dõi
         self.log = []
         self.log_energy = 0
         self.check_status()
@@ -89,10 +91,13 @@ class Node:
 
     def probe_targets(self):
         self.listTargets.clear()
+        # bổ sung 2 list target là các list target xung quanh (list total target) và list target theo dõi (list target)
         for target in self.net.listTargets:
             if euclidean(self.location, target.location) <= self.sen_range:
-                
-                self.listTargets.append(target)
+                self.listTotalTargets.append(target)
+                if target.is_active == 0:
+                    self.listTargets.append(target)
+                    target.is_active = 1
 
     def generate_packages(self):
         for target in self.listTargets:

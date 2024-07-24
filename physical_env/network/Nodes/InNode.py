@@ -1,4 +1,5 @@
 import random
+from scipy.spatial.distance import euclidean
 from .Node import Node
 
 class InNode(Node):
@@ -48,6 +49,23 @@ class InNode(Node):
         self.package_index = self.package_index + 1
 
         return self.out_node_list[self.chosen_out_node_index] 
+    
+    def probe_neighbors(self):
+        self.neighbors.clear()
+        self.potentialSender.clear()
+        for node in self.net.listNodes:
+            if self != node and euclidean(node.location, self.location) <= self.com_range:
+                self.neighbors.append(node)
+                if(node.__class__.__name__ == "RelayNode"):
+                    if(self.cluster_id == node.end.id):
+                        self.potentialSender.append(node)
+                if(node.__class__.__name__ == "SensorNode"):
+                    if(self.cluster_id == node.cluster_id):
+                        self.potentialSender.append(node)
+                if(node.__class__.__name__ == "ConnectorNode"):
+                    if(self.cluster_id == node.cluster_id):
+                        self.potentialSender.append(node)
+    
 
     def chosen_random_index(self):
         if(self.out_node_number == 1):
@@ -57,8 +75,9 @@ class InNode(Node):
     
     def get_out_node_list(self):
         for node in self.neighbors:
-            if(node.__class__.__name__ == "OutNode" and self.cluster_id == node.cluster_id):
-                self.out_node_list.append(node)
+            if(node.__class__.__name__ == "OutNode"):
+                if(self.cluster_id == node.cluster_id):
+                    self.out_node_list.append(node)
         self.out_node_number = len(self.out_node_list)
 
         

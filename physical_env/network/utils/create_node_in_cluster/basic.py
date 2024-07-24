@@ -15,10 +15,10 @@ from Nodes.SensorNode import SensorNode
 
 def createNodeInCluster(net):
 
-        com_range =  net.phy['com_range']*0.9
-        print(com_range)
-        sen_range =  net.phy['sen_range']*0.9
-        print(sen_range)
+        init_com_range =  net.phy['com_range']*0.95
+        init_sen_range =  net.phy['sen_range']*0.95
+        com_range =  net.phy['com_range']*0.95
+        sen_range =  net.phy['sen_range']*0.95
         Cnt_in = [0] * (len(net.listClusters) + 1)
         Cnt_out= [0] * (len(net.listClusters) + 1)
 
@@ -34,6 +34,14 @@ def createNodeInCluster(net):
 
         nodeInsideCluster = []
         for cluster in net.listClusters:
+            # bổ sung: chỉnh range theo số cluster/ 20 target === 0.4; 0 target === 1
+            for cluster_id, number_cluster in net.num_targets_per_cluster:
+                if cluster.id == cluster_id:
+                    com_range = init_com_range * (1 - 0.015 * number_cluster)
+                    sen_range = init_sen_range * (1 - 0.015 * number_cluster)
+                    print(com_range)
+                    print(sen_range)
+            ####
             id = cluster.id
             # Tạo InNode, OutNode
             phi = 2 * math.pi / (int) (Cnt_in[id] + Cnt_out[id] + 1)
@@ -42,8 +50,6 @@ def createNodeInCluster(net):
             for i in range(0,Cnt_in[id] + Cnt_out[id]):
                 X = cluster.centroid[0] + (com_range/2) * math.cos(alpha)
                 Y = cluster.centroid[1] + (com_range/2) * math.sin(alpha)
-                # X = cluster.centroid[0] + (com_range/4) * math.cos(alpha)
-                # Y = cluster.centroid[1] + (com_range/4) * math.sin(alpha)
                 cnt +=1
                 ID  +=1
                 if(cnt<=Cnt_in[id]): 
@@ -96,8 +102,8 @@ def createNodeInCluster(net):
                     beta = element[2]/com_range
                     delta_x = nearest_node_x -sensor_x 
                     delta_y = nearest_node_y -sensor_y
-                    for i in range(1,int(min_dis_node/com_range)):
-                    # for i in range(1,int(min_dis_node/com_range) + 1):
+                    # for i in range(1,int(min_dis_node/com_range)):
+                    for i in range(1,int(min_dis_node/com_range) + 1):
 
                         x_new = sensor_x + i*delta_x/beta
                         y_new = sensor_y + i*delta_y/beta

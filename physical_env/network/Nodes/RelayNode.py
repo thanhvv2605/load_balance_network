@@ -29,3 +29,17 @@ class RelayNode(Node):
                 if(node.cluster_id == self.end.id):
                  return node
         pass
+
+    def probe_neighbors(self):
+        self.neighbors.clear()
+        self.potentialSender.clear()
+        for node in self.net.listNodes:
+            if self != node and euclidean(node.location, self.location) <= self.com_range:
+                self.neighbors.append(node)
+                if(node.__class__.__name__ == "RelayNode"):
+                    if(self.start.id == node.start.id and self.end.id == node.end.id):
+                        self.potentialSender.append(node)
+                if(node.__class__.__name__ == "OutNode"):
+                    if(node.cluster_id == self.start.id):
+                        self.potentialSender.append(node)
+                
