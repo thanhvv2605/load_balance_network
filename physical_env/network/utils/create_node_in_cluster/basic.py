@@ -15,10 +15,10 @@ from Nodes.SensorNode import SensorNode
 
 def createNodeInCluster(net):
 
-        com_range =  net.phy['com_range']*0.9
-        print(com_range)
-        sen_range =  net.phy['sen_range']*0.9
-        print(sen_range)
+        init_com_range =  net.phy['com_range']*0.95
+        init_sen_range =  net.phy['sen_range']*0.95
+        com_range =  net.phy['com_range']*0.95
+        sen_range =  net.phy['sen_range']*0.95
         Cnt_in = [0] * (len(net.listClusters) + 1)
         Cnt_out= [0] * (len(net.listClusters) + 1)
 
@@ -34,6 +34,14 @@ def createNodeInCluster(net):
 
         nodeInsideCluster = []
         for cluster in net.listClusters:
+            # bổ sung: chỉnh range theo số cluster/ 20 target === 0.4; 0 target === 1
+            for cluster_id, number_cluster in net.num_targets_per_cluster:
+                if cluster.id == cluster_id:
+                    com_range = init_com_range * (1 - 0.0075 * 2 * number_cluster)
+                    sen_range = init_sen_range * (1 - 0.0075 * 2 * number_cluster)
+                    print(com_range)
+                    print(sen_range)
+            ####
             id = cluster.id
             # Tạo InNode, OutNode
             phi = 2 * math.pi / (int) (Cnt_in[id] + Cnt_out[id] + 1)
@@ -76,6 +84,8 @@ def createNodeInCluster(net):
             nearest_node_targets =  sorted(nearest_node_targets, key=lambda element: element[2], reverse=True)
 
             for element in nearest_node_targets:
+                if element[3] == 1:
+                    continue # target đã được theo dõi không cần đặt thêm node
                 target_x , target_y = element[0].location
                 nearest_node_x, nearest_node_y = element[1].location
                 min_dis_node = element[2]
@@ -85,8 +95,8 @@ def createNodeInCluster(net):
                     continue
                 else:
                     # Câu lệnh if check ở đây để kiểm tra xem cái target này đã được theo dõi chưa
-                    delta_x = nearest_node_x -target_x 
-                    delta_y = nearest_node_y -target_y
+                    delta_x = nearest_node_x - target_x 
+                    delta_y = nearest_node_y - target_y
                     sensor_x = target_x + delta_x/beta
                     sensor_y = target_y + delta_y/beta
                     ID+=1
@@ -94,13 +104,26 @@ def createNodeInCluster(net):
                     beta = element[2]/com_range
                     delta_x = nearest_node_x -sensor_x 
                     delta_y = nearest_node_y -sensor_y
-                    for i in range(1,int(min_dis_node/com_range)):
+                    # cập nhật các target xung quanh node vừa tạo là được theo dõi
+                    for element in nearest_node_targets:
+                        for target in cluster.listTargets:
+                            if euclidean(element[0].location, [sensor_x,sensor_y]) < sen_range and element[0].id == target.id:
+                                element[3] = 1
+
+                    # for i in range(1,int(min_dis_node/com_range)):
+                    for i in range(1,int(min_dis_node/com_range) + 1):
+
                         x_new = sensor_x + i*delta_x/beta
                         y_new = sensor_y + i*delta_y/beta
                         ID+=1
+                        # # cập nhật các target xung quanh node vừa tạo là được theo dõi
+                        for element in nearest_node_targets:
+                            for target in cluster.listTargets:
+                                if euclidean(element[0].location, [x_new,y_new]) < sen_range and element[0].id == target.id:
+                                    element[3] = 1
+
                         cluster.listNodes.append(ConnectorNode([x_new,y_new],ID,net.phy))
-                    
+
             nodeInsideCluster = nodeInsideCluster + cluster.listNodes  
              
         return nodeInsideCluster   
-

@@ -21,7 +21,10 @@ class BaseStation:
         self.direct_nodes.clear()
         for node in self.net.listNodes:
             if euclidean(self.location, node.location) <= node.com_range:
-                self.direct_nodes.append(node)
+                # sửa : bs chỉ nhận gói tin từ các relay node
+                if (node.__class__.__name__ == "RelayNode" or node.__class__.__name__ == "OutNode"):
+                    self.direct_nodes.append(node)
+                    # print(node.__class__.__name__)
 
     def receive_package(self, package):
         return

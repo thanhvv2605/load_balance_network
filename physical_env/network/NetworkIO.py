@@ -28,14 +28,13 @@ class NetworkIO:
         listTargets = []
         for tmp in net_argc["nodes"]:
             listNodes.append(Node(location=tmp, phy_spe=copy.deepcopy(self.node_phy_spe)))
-        ID = -1
-        for  tmp in self.net_argc["targets"]:
-            ID +=1
-            listTargets.append(Target(location=tmp,id = ID))
+        
+        target_id = -1 # khởi tạo id của target
+        for target_location in self.net_argc["targets"]:
+            target_id += 1
+            listTargets.append(Target(location = target_location, id = target_id))
 
         baseStation = BaseStation(location=net_argc["base_station"])
-        # with open("listTargets.json", "w") as output_file:
-        #     json.dump(listTargets, output_file)
         env = simpy.Environment()
         #net = Network(env, baseStation, listTargets, net_argc["max_time"],phy=copy.deepcopy(self.node_phy_spe)) 
 

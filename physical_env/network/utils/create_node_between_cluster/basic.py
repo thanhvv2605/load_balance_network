@@ -9,7 +9,9 @@ def createNodeBetweenCluster(net):
  
         epsilon = 1e-6
         ListRelayNode = []
+        init_range = net.phy['com_range'] * net.Alpha
         range = net.phy['com_range'] * net.Alpha
+
         ID = 0
         for node in net.listNodes:
             if node.id > ID: 
@@ -47,6 +49,12 @@ def createNodeBetweenCluster(net):
                       cnt += 1   
             while True:
                     distance = euclidean(U,V)
+
+                    # bổ sung: chỉnh range theo số cluster/ 20 target === 0.4; 0 target === 1
+                    for cluster_id, number_cluster in net.num_targets_per_cluster:
+                         if v.id == cluster_id:
+                              range = init_range * (1 - 0.0075 * 2 * number_cluster)
+                    ####
                     if(distance < range ): 
                         break
                     if(distance < 2*range):
