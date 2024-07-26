@@ -1,5 +1,6 @@
 from Node import Node
 from scipy.spatial.distance import euclidean
+import math
 
 class OutNode(Node):
     def __init__(self, location ,id , phy):
@@ -9,9 +10,14 @@ class OutNode(Node):
        self.cluster_id = 0
 
     def find_receiver(self): # define outnode
+        nearest_node = None
+        min_distance = math.inf
         for node in self.neighbors:
             if(node.__class__.__name__ == "RelayNode" and node.start.id == self.cluster_id): 
-                    return node
+                if euclidean(node.location, self.location) < min_distance:
+                    nearest_node = node
+                    min_distance = euclidean(node.location, self.location)
+        return nearest_node
         pass
 
     def probe_neighbors(self):

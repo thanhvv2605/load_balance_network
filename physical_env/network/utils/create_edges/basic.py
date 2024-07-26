@@ -31,9 +31,9 @@ def createEdges(net):
         edges = []
         edges_id = []
         list_common_elements = []
-        # para = len(net.listTargets)/5
+        para = len(net.listTargets)/5
         # print(para)
-        para = 20
+        # para = 10
         print(len(net.listTargets))
 
         for cluster in net.listClusters:

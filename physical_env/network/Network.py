@@ -75,6 +75,7 @@ class Network:
                     self.targets_active[target.id] = 1
                     # bổ sung
                     self.listTargets[target.id].is_active = 1
+                    target.is_active = 1
 
                 for neighbor in node.potentialSender:
                     if neighbor.status == 1 and neighbor.level == -1:
@@ -106,6 +107,7 @@ class Network:
                 for target in node.listTotalTargets:
                     if target.is_active == 0:
                         self.targets_active[target.id] = 1
+                        target.is_active = 1
                         self.listTargets[target.id].is_active = 1
                         node.listTargets.append(target)
 
@@ -129,6 +131,14 @@ class Network:
             self.setLevels()
             self.alive = self.check_targets()
             yield self.env.timeout(9.0 * t / 10.0)
+
+            # # kiểm tra xem các target có được theo dõi đúng bới 1 sensor thôi không không
+            # check_target = 0
+            # for node in self.listNodes:
+            #     check_target += len(node.listTargets)
+            # print(check_target)
+            ### chuẩn, một target chỉ được theo dõi bởi một sensor, nếu sensor chết sẽ chuyển target cho sensor khác
+            
             if self.alive == 0 or self.env.now >= self.max_time:
                 print("Network dies")
                 print(self.env.now,self.check_nodes(),self.check_targets())
