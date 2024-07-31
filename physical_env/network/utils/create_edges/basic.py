@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from itertools import cycle
 
 # Input 
     # [Cluster1,Cluster2 , . . . ]
@@ -75,6 +77,7 @@ def createEdges(net):
         print(num_targets_clusters)
         
         # Chọn cạnh
+        print("Common point: ", list_common_elements)
         for point in list_common_elements:
             id =point[0]
             common_points = point[1]
@@ -100,6 +103,26 @@ def createEdges(net):
                 for cluster in net.listClusters:
                     if cluster.id == id:
                         edges_id.append((id,-1))
+        # for point in list_common_elements:
+        #     id =point[0]
+        #     common_points = point[1]
+        #     for targets_cluster1 in num_targets_clusters:
+        #         if id == targets_cluster1[0]:
+        #             num_targets_point = targets_cluster1[1]
+        #     if common_points: 
+        #         for target_cluster in num_targets_clusters:
+        #             if target_cluster[0]==common_points[0]:
+        #                 edges_id.append([id,common_points[0]])
+        #                 target_cluster[1]= target_cluster[1]+num_targets_point
+        #                 if target_cluster[1]>= 40:
+        #                     edges_id.append([id,-1])
+        #                     target_cluster[1]=target_cluster[1]/2
+        #     else:
+        #         for cluster in net.listClusters:
+        #             if cluster.id == id:
+        #                 edges_id.append((id,-1))
+            
+
 
         print("Số target tải mỗi cluster")
         print(num_targets_clusters)
@@ -122,5 +145,43 @@ def createEdges(net):
                 if edge[1] == -1:
                     cluster2 = net.baseStation 
             edges.append((cluster1,cluster2))
+         # Vẽ 
+        edge_colors = cycle([ 'g', 'b', 'y', 'c', 'm', 'k'])
 
+        cluster_colors = ['g', 'b', 'y', 'c', 'm', 'pink', 'orange', 'purple', 
+                        'brown', 'olive', 'teal', 'navy', 'maroon', 'lime', 'aqua', 'fuchsia',
+                        'indigo', 'gold']
+        plt.figure(figsize=(10, 10))
+        for i in range(len(net.listClusters)):
+            cluster = net.listClusters[i]
+            color = cluster_colors[i % len(cluster_colors)]  
+            # Trích xuất các điểm và điểm centroid từ dữ liệu cluster
+            points = [target.location for target in cluster.listTargets]
+            centroid = cluster.centroid
+            x_points = [point[0] for point in points]
+            y_points = [point[1] for point in points]
+            # Tạo mảng tọa độ x và y của điểm centroid
+            centroid_x = centroid[0]
+            centroid_y = centroid[1]
+            # Vẽ các điểm trong cluster (trừ điểm centroid)
+            plt.scatter(x_points, y_points, color=color)
+            # Vẽ điểm centroid
+            plt.scatter(centroid_x, centroid_y, color='red')
+        # Vẽ các cạnh giữa các cluster
+        for edge, color in zip(edges, edge_colors):
+
+            if edge[1] is net.baseStation:
+                x_values = [edge[0].centroid[0], 500]
+                y_values = [edge[0].centroid[1], 500]
+                plt.plot(x_values, y_values, color=color)
+            else:
+                # Trích xuất tọa độ của các điểm trong cạnh
+                x_values = [edge[0].centroid[0], edge[1].centroid[0]]
+                y_values = [edge[0].centroid[1], edge[1].centroid[1]]
+                plt.plot(x_values, y_values, color=color)
+        plt.scatter(500, 500, color='red', marker='*', s=300, label='Base Station')
+        
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show()
         return edges, num_targets_clusters
