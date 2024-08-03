@@ -17,8 +17,16 @@ class OutNode(Node):
                 if euclidean(node.location, self.location) < min_distance:
                     nearest_node = node
                     min_distance = euclidean(node.location, self.location)
-        return nearest_node
-        pass
+        if (nearest_node != None):
+            return nearest_node
+
+        # nếu không tìm được relay node, tìm cho in node gần nhất nếu có
+        # for node in self.neighbors:
+        #     if(node.__class__.__name__ == "InNode"):
+        #         if euclidean(node.location, self.location) < min_distance:
+        #             nearest_node = node
+        #             min_distance = euclidean(node.location, self.location)
+        # return nearest_node
 
     def probe_neighbors(self):
         self.neighbors.clear()

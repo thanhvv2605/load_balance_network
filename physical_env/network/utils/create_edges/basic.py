@@ -103,6 +103,7 @@ def createEdges(net):
                 for cluster in net.listClusters:
                     if cluster.id == id:
                         edges_id.append((id,-1))
+
         # for point in list_common_elements:
         #     id =point[0]
         #     common_points = point[1]
