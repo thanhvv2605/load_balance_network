@@ -78,50 +78,49 @@ def createEdges(net):
         
         # Chọn cạnh
         print("Common point: ", list_common_elements)
-        for point in list_common_elements:
-            id =point[0]
-            common_points = point[1]
-            for targets_cluster1 in num_targets_clusters:
-                if id == targets_cluster1[0]:
-                    num_targets_point = targets_cluster1[1]
-             
-            if common_points:
-                found = False
-                for common_point in common_points:
-                    for targets_cluster in num_targets_clusters:
-                        if targets_cluster[0] == common_point:
-                            if num_targets_point + targets_cluster[1] < para:
-                                edges_id.append([id,common_point])
-                                targets_cluster[1]=targets_cluster[1]+num_targets_point
-                                found=True
-                                break
-                    if found:
-                        break
-                if not found:
-                    edges_id.append([id,-1]) 
-            else:
-                for cluster in net.listClusters:
-                    if cluster.id == id:
-                        edges_id.append((id,-1))
-
         # for point in list_common_elements:
         #     id =point[0]
         #     common_points = point[1]
         #     for targets_cluster1 in num_targets_clusters:
         #         if id == targets_cluster1[0]:
         #             num_targets_point = targets_cluster1[1]
-        #     if common_points: 
-        #         for target_cluster in num_targets_clusters:
-        #             if target_cluster[0]==common_points[0]:
-        #                 edges_id.append([id,common_points[0]])
-        #                 target_cluster[1]= target_cluster[1]+num_targets_point
-        #                 if target_cluster[1]>= 40:
-        #                     edges_id.append([id,-1])
-        #                     target_cluster[1]=target_cluster[1]/2
+             
+        #     if common_points:
+        #         found = False
+        #         for common_point in common_points:
+        #             for targets_cluster in num_targets_clusters:
+        #                 if targets_cluster[0] == common_point:
+        #                     if num_targets_point + targets_cluster[1] < para:
+        #                         edges_id.append([id,common_point])
+        #                         targets_cluster[1]=targets_cluster[1]+num_targets_point
+        #                         found=True
+        #                         break
+        #             if found:
+        #                 break
+        #         if not found:
+        #             edges_id.append([id,-1]) 
         #     else:
         #         for cluster in net.listClusters:
         #             if cluster.id == id:
         #                 edges_id.append((id,-1))
+        for point in list_common_elements:
+            id =point[0]
+            common_points = point[1]
+            for targets_cluster1 in num_targets_clusters:
+                if id == targets_cluster1[0]:
+                    num_targets_point = targets_cluster1[1]
+            if common_points: 
+                for target_cluster in num_targets_clusters:
+                    if target_cluster[0]==common_points[0]:
+                        edges_id.append([id,common_points[0]])
+                        target_cluster[1]= target_cluster[1]+num_targets_point
+                        if target_cluster[1]>= para:
+                            edges_id.append([id,-1])
+                            target_cluster[1]=target_cluster[1]/2
+            else:
+                for cluster in net.listClusters:
+                    if cluster.id == id:
+                        edges_id.append((id,-1))
             
 
 

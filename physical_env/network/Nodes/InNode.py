@@ -57,7 +57,7 @@ class InNode(Node):
             if self != node and euclidean(node.location, self.location) <= self.com_range:
                 self.neighbors.append(node)
                 if(node.__class__.__name__ == "RelayNode"):
-                    if(self.cluster_id == node.end.id):
+                    if(self.cluster_id == node.receive_cluster_id.id):
                         self.potentialSender.append(node)
                 if(node.__class__.__name__ == "SensorNode"):
                     if(self.cluster_id == node.cluster_id):
@@ -75,9 +75,11 @@ class InNode(Node):
     
     def get_out_node_list(self):
         for node in self.neighbors:
-            if(node.__class__.__name__ == "OutNode"):
+            if(node.__class__.__name__ == "OutNode" and node.status == 1):
                 if(self.cluster_id == node.cluster_id):
                     self.out_node_list.append(node)
         self.out_node_number = len(self.out_node_list)
+        self.max_package_index = self.out_node_number * self.rr_max_unit * self.rr_max_cycle
+
 
         

@@ -47,8 +47,8 @@ class Node:
         # self.typeNode = " "
         # create inhiret 
 
-        self.startId = None
-        self.endId = None
+        # self.send_cluster_idId = None
+        # self.receive_cluster_idId = None
 
     def operate(self, t=1):
         """

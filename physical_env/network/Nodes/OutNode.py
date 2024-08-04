@@ -13,7 +13,7 @@ class OutNode(Node):
         nearest_node = None
         min_distance = math.inf
         for node in self.neighbors:
-            if(node.__class__.__name__ == "RelayNode" and node.start.id == self.cluster_id): 
+            if(node.__class__.__name__ == "RelayNode" and node.send_cluster_id.id == self.cluster_id): 
                 if euclidean(node.location, self.location) < min_distance:
                     nearest_node = node
                     min_distance = euclidean(node.location, self.location)
